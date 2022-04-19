@@ -1,5 +1,5 @@
 name: rate_limit
-description: Rate limit project
+description: The Rate limit test project
 version: 0.0.1
 
 environment:
