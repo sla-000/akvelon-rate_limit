@@ -1,0 +1,9 @@
+name: queue
+description: Rate limit project
+version: 0.0.1
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+
+dev_dependencies:
+  test: ^1.0.0
