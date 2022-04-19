@@ -1,4 +1,4 @@
-name: queue
+name: rate_limit
 description: Rate limit project
 version: 0.0.1
 

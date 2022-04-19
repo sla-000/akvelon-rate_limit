@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:queue/rate_limit.dart';
+import 'package:rate_limit/rate_limit.dart';
 import 'package:test/test.dart';
 
 const List<int> kPreciousResource = <int>[3, 1, 4, 1, 5];
