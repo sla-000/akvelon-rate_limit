@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'dart:core';
 
+import 'package:rate_limit/limiter.dart';
 import 'package:rate_limit/rate_limit.dart';
 
-class LimitsSet {
+class LimitsSet implements Limiter {
   LimitsSet({
     this.limits,
   });
@@ -11,6 +11,7 @@ class LimitsSet {
   /// List of limits
   final List<RateLimit>? limits;
 
+  @override
   Future<void> waitAccess() async {
     final Iterable<Future<void>>? futures = limits?.map(
       (RateLimit rateLimit) => rateLimit.waitAccess(),

@@ -5,9 +5,12 @@ import 'common.dart';
 
 void main() {
   late RateLimit rateLimit;
+  late Repo repo;
   late Stopwatch stopwatch;
 
   setUp(() {
+    repo = RepoMock();
+
     rateLimit = RateLimit(
       requestCount: 3,
       timeMs: 1000,
@@ -33,13 +36,13 @@ void main() {
       stopwatch.start();
 
       await rateLimit.waitAccess();
-      expect(await resourceRequest(0), 3);
+      expect(await repo.resourceRequest(0), 3);
       await sleep(300);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       await sleep(300);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       expectTime(600);
     },
   );
@@ -52,14 +55,14 @@ void main() {
       stopwatch.start();
 
       await rateLimit.waitAccess();
-      expect(await resourceRequest(0), 3);
+      expect(await repo.resourceRequest(0), 3);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       await sleep(500);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(3), 1);
+      expect(await repo.resourceRequest(3), 1);
       expectTime(1000);
     },
   );
@@ -72,19 +75,19 @@ void main() {
       stopwatch.start();
 
       await rateLimit.waitAccess();
-      expect(await resourceRequest(0), 3);
+      expect(await repo.resourceRequest(0), 3);
       await sleep(100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       await sleep(100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       await sleep(100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(3), 1);
+      expect(await repo.resourceRequest(3), 1);
       expectTime(1000);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(4), 5);
+      expect(await repo.resourceRequest(4), 5);
       expectTime(1100);
     },
   );
@@ -97,25 +100,25 @@ void main() {
       stopwatch.start();
 
       await rateLimit.waitAccess();
-      expect(await resourceRequest(0), 3);
+      expect(await repo.resourceRequest(0), 3);
       await sleep(100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       await sleep(100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       await sleep(1800);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(3), 1);
+      expect(await repo.resourceRequest(3), 1);
       expectTime(2000);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       expectTime(2000);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       expectTime(2000);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       expectTime(3000);
     },
   );
@@ -128,34 +131,34 @@ void main() {
       stopwatch.start();
 
       await rateLimit.waitAccess();
-      expect(await resourceRequest(0), 3);
+      expect(await repo.resourceRequest(0), 3);
       await sleep(100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       await sleep(200);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       expectTime(300);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(3), 1);
+      expect(await repo.resourceRequest(3), 1);
       expectTime(1000);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(4), 5);
+      expect(await repo.resourceRequest(4), 5);
       expectTime(1100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(0), 3);
+      expect(await repo.resourceRequest(0), 3);
       expectTime(1300);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(1), 1);
+      expect(await repo.resourceRequest(1), 1);
       expectTime(2000);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(2), 4);
+      expect(await repo.resourceRequest(2), 4);
       expectTime(2100);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(3), 1);
+      expect(await repo.resourceRequest(3), 1);
       expectTime(2300);
       await rateLimit.waitAccess();
-      expect(await resourceRequest(4), 5);
+      expect(await repo.resourceRequest(4), 5);
       expectTime(3000);
     },
   );

@@ -1,6 +1,8 @@
 import 'dart:async';
 
-class RateLimit {
+import 'package:rate_limit/limiter.dart';
+
+class RateLimit implements Limiter {
   RateLimit({
     this.timeMs = 1000,
     this.requestCount = 5,
@@ -14,6 +16,7 @@ class RateLimit {
 
   final List<int> _historyOfRequestsTimes = [];
 
+  @override
   Future<void> waitAccess() async {
     final currentRequestTime = DateTime.now().millisecondsSinceEpoch;
 
