@@ -1,10 +1,9 @@
 import 'dart:async';
 
-class RateLimit<R, A> {
+class RateLimit {
   RateLimit({
     this.timeMs = 1000,
     this.requestCount = 5,
-    required this.resourceRequest,
   });
 
   /// Window length in ms
@@ -13,18 +12,15 @@ class RateLimit<R, A> {
   /// Max requests number per window
   final int requestCount;
 
-  /// Function to access a resource
-  final FutureOr<R> Function(A arg) resourceRequest;
-
   final List<int> _historyOfRequestsTimes = [];
 
-  Future<R> request(A arg) async {
+  Future<void> waitAccess() async {
     final currentRequestTime = DateTime.now().millisecondsSinceEpoch;
 
     if (_historyOfRequestsTimes.length < requestCount) {
       _historyOfRequestsTimes.add(currentRequestTime);
 
-      return await resourceRequest(arg);
+      return;
     }
 
     final firstRequestTime = _historyOfRequestsTimes[0];
@@ -41,6 +37,6 @@ class RateLimit<R, A> {
       await Future<void>.delayed(Duration(milliseconds: timeToWait));
     }
 
-    return await resourceRequest(arg);
+    return;
   }
 }
