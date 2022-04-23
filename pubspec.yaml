@@ -1,5 +1,5 @@
-name: rate_limit
-description: The Rate limit test project
+name: requests_limiter
+description: The limiter for requests
 version: 0.0.1
 
 environment:

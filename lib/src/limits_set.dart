@@ -1,7 +1,7 @@
 import 'dart:core';
 
-import 'package:rate_limit/limiter.dart';
-import 'package:rate_limit/rate_limit.dart';
+import 'package:requests_limiter/src/limiter.dart';
+import 'package:requests_limiter/src/rate_limit.dart';
 
 class LimitsSet implements Limiter {
   LimitsSet({
@@ -25,4 +25,7 @@ class LimitsSet implements Limiter {
       ...futures,
     ]);
   }
+
+  @override
+  bool haveAccess() => limits?.every((RateLimit rateLimit) => rateLimit.haveAccess()) ?? true;
 }

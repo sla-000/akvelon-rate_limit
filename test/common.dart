@@ -8,7 +8,7 @@ abstract class Repo {
 
 class RepoMock implements Repo {
   @override
-  FutureOr<int> resourceRequest(int index) async => kPreciousResource[index];
+  int resourceRequest(int index) => kPreciousResource[index];
 }
 
 Future<void> sleep(int ms) => Future<void>.delayed(Duration(milliseconds: ms));

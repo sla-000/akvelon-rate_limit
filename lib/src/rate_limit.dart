@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:rate_limit/limiter.dart';
+import 'package:requests_limiter/src/limiter.dart';
 
 class RateLimit implements Limiter {
   RateLimit({
@@ -41,5 +41,20 @@ class RateLimit implements Limiter {
     }
 
     return;
+  }
+
+  @override
+  bool haveAccess() {
+    if (_historyOfRequestsTimes.length < requestCount) {
+      return true;
+    }
+
+    final firstRequestTime = _historyOfRequestsTimes[0];
+
+    final currentRequestTime = DateTime.now().millisecondsSinceEpoch;
+
+    final int deltaBetweenFirstAndCurrentRequest = currentRequestTime - firstRequestTime;
+
+    return deltaBetweenFirstAndCurrentRequest >= timeMs;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:rate_limit/rate_limit.dart';
+import 'package:requests_limiter/src/rate_limit.dart';
 import 'package:test/test.dart';
 
 import 'common.dart';
@@ -35,12 +35,15 @@ void main() {
     () async {
       stopwatch.start();
 
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(0), 3);
       await sleep(300);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(1), 1);
       await sleep(300);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(2), 4);
       expectTime(600);
@@ -54,13 +57,17 @@ void main() {
     () async {
       stopwatch.start();
 
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(0), 3);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(1), 1);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(2), 4);
       await sleep(500);
+      expect(rateLimit.haveAccess(), isFalse);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(3), 1);
       expectTime(1000);
@@ -74,18 +81,23 @@ void main() {
     () async {
       stopwatch.start();
 
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(0), 3);
       await sleep(100);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(1), 1);
       await sleep(100);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(2), 4);
       await sleep(100);
+      expect(rateLimit.haveAccess(), isFalse);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(3), 1);
       expectTime(1000);
+      expect(rateLimit.haveAccess(), isFalse);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(4), 5);
       expectTime(1100);
@@ -99,24 +111,31 @@ void main() {
     () async {
       stopwatch.start();
 
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(0), 3);
       await sleep(100);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(1), 1);
       await sleep(100);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(2), 4);
       await sleep(1800);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(3), 1);
       expectTime(2000);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(1), 1);
       expectTime(2000);
+      expect(rateLimit.haveAccess(), isTrue);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(2), 4);
       expectTime(2000);
+      expect(rateLimit.haveAccess(), isFalse);
       await rateLimit.waitAccess();
       expect(await repo.resourceRequest(2), 4);
       expectTime(3000);
