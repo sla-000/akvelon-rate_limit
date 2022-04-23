@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final LimitsSet _limitsSet = LimitsSet(limits: <RateLimit>[
     RateLimit(timeMs: 1000, requestCount: 1),
     RateLimit(timeMs: 3000, requestCount: 2),
-    RateLimit(timeMs: 6000, requestCount: 3),
+    // RateLimit(timeMs: 6000, requestCount: 3),
   ]);
   final Set<int> timeOfTap = {};
 
