@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:example/time_plot.dart';
 import 'package:flutter/material.dart';
 import 'package:requests_limiter/requests_limiter.dart';
+
+const int kMaxHistorySeconds = 10;
 
 void main() {
   runApp(const MyApp());
@@ -40,14 +43,18 @@ class _MyHomePageState extends State<MyHomePage> {
     RateLimit(timeMs: 3000, requestCount: 2),
     RateLimit(timeMs: 6000, requestCount: 3),
   ]);
+  final Set<int> timeOfTap = {};
 
-  late final Timer _timer;
+  final Set<int> timeOfRequest = {};
+
+  late final Timer _haveAccessTimer;
+  late final Timer _clearTimesTimer;
 
   @override
   void initState() {
     super.initState();
 
-    _timer = Timer.periodic(
+    _haveAccessTimer = Timer.periodic(
       const Duration(milliseconds: 32),
       (timer) {
         setState(() {
@@ -55,17 +62,30 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       },
     );
+
+    _clearTimesTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (timer) {
+        final int timeLimit = DateTime.now().millisecondsSinceEpoch - kMaxHistorySeconds * 1000;
+
+        timeOfTap.removeWhere((int time) => time < timeLimit);
+        timeOfRequest.removeWhere((int time) => time < timeLimit);
+      },
+    );
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _haveAccessTimer.cancel();
+    _clearTimesTimer.cancel();
   }
 
   Future<void> _incrementCounter() async {
     setState(() => _tapCounter++);
+    timeOfTap.add(DateTime.now().millisecondsSinceEpoch);
 
     await _limitsSet.waitAccess();
+    timeOfRequest.add(DateTime.now().millisecondsSinceEpoch);
     _resourceRequest();
   }
 
@@ -80,34 +100,62 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Text('You have sent this many requests:'),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                '$_tapCounter',
-                style: Theme.of(context).textTheme.headline4,
-                key: Key('$_resourceCounter'),
-              ),
+            const Center(
+              child: Text('You have sent this many requests:'),
             ),
-            const Text('You have received data this many times:'),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                '$_resourceCounter',
-                style: Theme.of(context).textTheme.headline4,
-                key: Key('$_resourceCounter'),
-              ),
-            ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              height: 80,
-              width: 150,
-              color: _haveAccess ? Colors.green.shade400 : Colors.red.shade400,
-              child: Center(
+            Center(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
                 child: Text(
-                  _haveAccess ? 'Free' : 'Locked',
+                  '$_tapCounter',
                   style: Theme.of(context).textTheme.headline4,
+                  key: Key('$_resourceCounter'),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LiveTimePlot(
+                period: kMaxHistorySeconds,
+                count: 500,
+                values: timeOfTap,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Center(
+              child: Text('You have received data this many times:'),
+            ),
+            Center(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  '$_resourceCounter',
+                  style: Theme.of(context).textTheme.headline4,
+                  key: Key('$_resourceCounter'),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LiveTimePlot(
+                period: kMaxHistorySeconds,
+                count: 500,
+                values: timeOfRequest,
+              ),
+            ),
+            Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 80,
+                width: 150,
+                color: _haveAccess ? Colors.green.shade400 : Colors.red.shade400,
+                child: Center(
+                  child: Text(
+                    _haveAccess ? 'Free' : 'Locked',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
                 ),
               ),
             ),
